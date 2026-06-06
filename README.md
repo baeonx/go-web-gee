@@ -1,7 +1,7 @@
 # Gee - 从零实现的 Go Web 框架
 Gee 是一个**学习性质**的 Go Web 框架，通过 7 天迭代从零构建，深入理解 Web 框架的核心原理。API 设计参考 Gin 框架。
 
-> 📖 **配套教程**：[7天用Go从零实现Web框架Gee](https://geektutu.com/post/gee.html)
+> 📖 **参考教程**：[7天用Go从零实现Web框架Gee](https://geektutu.com/post/gee.html)
 
 ## 🚀 快速体验
 
