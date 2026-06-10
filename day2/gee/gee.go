@@ -8,7 +8,7 @@ import (
 
 // HandlerFunc 定义了框架处理 HTTP 请求的函数类型。
 // 该签名与标准库 http.HandlerFunc 兼容。
-type HandlerFunc func(w http.ResponseWriter, req *http.Request)
+type HandlerFunc func(c *Context)
 
 // Engine 是框架的核心引擎，负责管理路由和处理 HTTP 请求。
 // 它实现了 http.Handler 接口，可直接传递给 http.ListenAndServe。
@@ -56,6 +56,7 @@ func (engine *Engine) POST(pattern string, handler HandlerFunc) {
     engine.router[key] = handler
 }
 
+
 // DELETE 注册一个处理 HTTP DELETE 请求的路由
 func (engine *Engine) DELETE(pattern string, handler HandlerFunc) {
     pattern = engine.normalizePattern(pattern)
@@ -83,13 +84,22 @@ func (engine *Engine) Run(port string) {
 // ServeHTTP 实现 http.Handler 接口的核心方法。
 // 它根据请求的方法和路径从路由表中查找匹配的处理函数并执行。
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-    method := req.Method
-    path := req.URL.Path
-    key := method + "-" + path
-
+    c := engine.newContext(w, req)
+    key := c.Method + "-" + c.Path
     if handler, ok := engine.router[key]; ok {
-        handler(w, req)
+        handler(c)
     } else {
         http.NotFound(w, req)
+    }
+}
+
+
+func (engine *Engine) newContext(w http.ResponseWriter, req *http.Request) *Context {
+    return &Context{
+        Writer: w,
+        Req:    req,
+        Path:   req.URL.Path,
+        Method: req.Method,
+        StatusCode: http.StatusOK,  // 默认 200 OK
     }
 }
